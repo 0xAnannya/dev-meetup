@@ -3,14 +3,13 @@ const connectDB = require('./config/database');
 const User = require('./models/user');
 const app= express();
 
+app.use(express.json()); // to parse JSON bodies
+
 app.post('/signUp',async (req, res)=>{
 
-    const user = new User({
-        firstName: "Anannya",
-        lastName: "Sinha",
-        email: "abc@jgig.com",
-        age: 20
-    })
+    console.log(req.body)
+
+    const user = new User(req.body)
 
     await user.save();
     res.send("User created successfully");
