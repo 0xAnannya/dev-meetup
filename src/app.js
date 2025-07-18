@@ -2,13 +2,17 @@ const express = require("express");
 const connectDB = require("./config/database");
 const bcrypt = require("bcrypt"); // for password encryption
 const validator = require("validator"); // for email validation
+const cookieParser = require("cookie-parser"); // for handling cookies
+const jwt = require("jsonwebtoken"); // for token generation and verification
 
 const app = express();
 
 app.use(express.json()); // to parse JSON bodies
+app.use(cookieParser()); // to parse cookies
 
 const User = require("./models/user");
 const { validateSignUpData } = require("./utils/validators");
+const { userAuth } = require("./middlewares/auth");
 
 // signUp api
 app.post("/signUp", async (req, res) => {
@@ -36,34 +40,63 @@ app.post("/signUp", async (req, res) => {
 });
 
 //login api
-app.post("/login", async(req,res)=>{
-    try{
-        const {emailId, password} = req.body;
+app.post("/login", async (req, res) => {
+  try {
+    const { emailId, password } = req.body;
 
-        //valiadte emailid
-        const valid= (emailId && validator.isEmail(emailId))
+    //valiadte emailid
+    const valid = emailId && validator.isEmail(emailId);
 
-        console.log("Valid email:", valid);
-        if(!valid){
-            throw new Error("Invalid email address");
-        }
-
-        const user = await User.findOne({ emailId });
-        if (!user) {
-            throw new error("Invalid credentials");}
-        
-        //password compare
-        const isPasswordValid= await bcrypt.compare(password, user.password)    
-            if(!isPasswordValid){
-                return res.status(401).send("Invalid credentials");
-            }
-            res.send("Login successful");
+    if (!valid) {
+      throw new Error("Invalid email address");
     }
-    catch(err){
-        console.error("Error during login:", err);
-        res.status(500).send( err.message+ " Internal Server Error",);
+
+    const user = await User.findOne({ emailId });
+    if (!user) {
+      throw new error("Invalid credentials");
+    }
+
+    //password compare
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (isPasswordValid) {
+      const token = await jwt.sign({ _id: user._id }, "DEVMeetUpSecretKey", {expiresIn: "7d"});
+      // on production use hhtpOnly: true, 
+      res.cookie("token", token,{expires: new Date(Date.now() + 8 * 3600000)});
+      res.send("Login successful");
+    } else {
+      throw new Error("Invalid credentials");
+    }
+  } catch (err) {
+    console.error("Error during login:", err);
+    res.status(500).send(err.message + " Internal Server Error");
+  }
+});
+
+//get profile api
+app.get("/profile", userAuth, async (req, res) => {
+  try {
+    const user = req.user;
+    console.log("Fetching user profile", user);
+
+    res.send(user);
+  } catch (err) {
+    console.error("Error fetching profile:", err);
+  }
+});
+
+//send connection request
+
+app.post("/sendConnectionRequest",userAuth, async (req, res) => {
+    try{
+
+        res.send("Connection request sent successfully");
+
+    }catch(err){
+    console.error("Error sending connection request:", err);
+    res.status(500).send("Internal Server Error");
     }
 })
+
 
 app.get("/users", async (req, res) => {
   try {
@@ -108,6 +141,7 @@ app.delete("/users", async (req, res) => {
 });
 
 // app.post
+
 
 connectDB()
   .then(() => {
