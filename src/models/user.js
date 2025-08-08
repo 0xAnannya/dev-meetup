@@ -17,6 +17,7 @@ const userSchema = new mongoose.Schema(
     emailId: {
       type: String,
     },
+
     age: {
       type: Number,
     },
@@ -28,7 +29,6 @@ const userSchema = new mongoose.Schema(
     timestamps: true, // this will add createdAt and updatedAt fields to the schema
   }
 );
-//      const token = await jwt.sign({ _id: user._id }, "DEVMeetUpSecretKey", {expiresIn: "7d"});
 
 userSchema.methods.getJWT = async function () {
   const user = this;
