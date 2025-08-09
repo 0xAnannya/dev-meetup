@@ -11,7 +11,17 @@ authRouter.post("/signUp", async (req, res) => {
     //validation
     validateSignUpData(req);
 
-    const { firstName, lastName, password, emailId } = req.body;
+    const {
+      firstName,
+      lastName,
+      password,
+      emailId,
+      skills,
+      age,
+      photoUrl,
+      gender,
+      about,
+    } = req.body;
 
     //encrypt password
     const passwordHash = await bcrypt.hash(password, 10); //10 is salt rounds
@@ -20,10 +30,15 @@ authRouter.post("/signUp", async (req, res) => {
       lastName,
       password: passwordHash,
       emailId,
+      skills,
+      age,
+      photoUrl,
+      gender,
+      about,
     });
     await user.save();
     res.send("User created successfully");
-  } catch (error) {
+  } catch (err) {
     console.error("Error during sign up:", err);
   }
 });
@@ -57,6 +72,17 @@ authRouter.post("/login", async (req, res) => {
   } catch (e) {
     console.error("Error during login:", e);
     res.status(500).send(e + " Internal Server Error");
+  }
+});
+
+authRouter.post("/logOut", async (req, res) => {
+  try {
+    res.cookie("token", null, {
+      expires: new Date(Date.now()),
+    });
+    res.send("Logged out");
+  } catch (err) {
+    throw new Error(err.message);
   }
 });
 
