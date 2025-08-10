@@ -54,7 +54,7 @@ authRouter.post("/login", async (req, res) => {
 
     const user = await User.findOne({ emailId });
     if (!user) {
-      throw new error("Invalid credentials");
+      throw new Error("Invalid credentials");
     }
     //password compare
     const isPasswordValid = await user.validatePassword(password);
@@ -70,7 +70,7 @@ authRouter.post("/login", async (req, res) => {
       throw new Error("Invalid credentials");
     }
   } catch (e) {
-    console.error("Error during login:", e);
+    console.error("Error during login:", e.message);
     res.status(500).send(e + " Internal Server Error");
   }
 });

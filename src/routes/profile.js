@@ -69,7 +69,6 @@ profileRouter.delete("/users", async (req, res) => {
   const id = req.body.id;
   try {
     const found = await User.findByIdAndDelete(id);
-    console.log(found);
     if (!found) {
       return res.status(404).send("User not found");
     }
@@ -84,7 +83,6 @@ profileRouter.delete("/users", async (req, res) => {
 profileRouter.get("/users", async (req, res) => {
   try {
     const users = await User.find({ firstName: "Anannya" });
-    console.log("Fetched users:", users);
     if (users.length === 0) {
       return res.status(404).send("NO users found");
     }
