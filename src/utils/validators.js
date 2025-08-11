@@ -6,7 +6,7 @@ const validateSignUpData = (req) => {
   if (!firstName || !lastName) {
     throw new Error("First name and last name are required");
   } else if (!validator.isEmail(emailId)) {
-    throw new error("Invalid email address");
+    throw new Error("Invalid email address");
   } else if (!validator.isStrongPassword(password)) {
     throw new Error(
       "Password is not strong enough. It should contain at least 8 characters, including uppercase, lowercase, numbers, and symbols."
