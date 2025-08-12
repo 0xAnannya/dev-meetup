@@ -53,4 +53,23 @@ userRouter.get("/user/connections", userAuth, async (req, res) => {
     res.json({ ERROR: err.message });
   }
 });
+
+userRouter.get("/feed", userAuth, async (req, res) => {
+  try {
+    const loggedInUser = req.user;
+    const connections = await ConnectionRequestModel.find({
+      $or: [{ fromUserId: loggedInUser._id }, { toUserId: loggedInUser._id }],
+    }).select("fromUserId toUserId");
+
+    const hideUsersFromFeed = new Set();
+
+    connections.forEach((connection) => {
+      hideUsersFromFeed.add(connection.fromUserId.toString());
+      hideUsersFromFeed.add(connection.toUserId.toString());
+    });
+  } catch (err) {
+    console.error(err);
+    res.json({ ERROR: err.message });
+  }
+});
 module.exports = userRouter;
