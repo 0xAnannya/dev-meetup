@@ -66,13 +66,13 @@ authRouter.post("/login", async (req, res) => {
       res.cookie("token", token, {
         expires: new Date(Date.now() + 8 * 360000),
       });
-      res.send("login successfull");
+      res.send(user);
     } else {
       throw new Error("Invalid credentials");
     }
   } catch (e) {
     console.error("Error during login:", e.message);
-    res.status(500).send(e + " Internal Server Error");
+    res.status(500).json({ message: e.message });
   }
 });
 
