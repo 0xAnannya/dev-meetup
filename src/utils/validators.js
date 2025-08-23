@@ -1,12 +1,14 @@
 const validator = require("validator");
 
 const validateSignUpData = (req) => {
-  const { firstName, lastName, password, emailId } = req.body;
+  const { name, breed, password, emailId } = req.body;
 
-  if (!firstName || !lastName) {
-    throw new Error("First name and last name are required");
+  if (!name) {
+    throw new Error("Name required");
   } else if (!validator.isEmail(emailId)) {
     throw new Error("Invalid email address");
+  } else if (!breed) {
+    throw new Error("Breed required");
   } else if (!validator.isStrongPassword(password)) {
     throw new Error(
       "Password is not strong enough. It should contain at least 8 characters, including uppercase, lowercase, numbers, and symbols."
@@ -16,14 +18,14 @@ const validateSignUpData = (req) => {
 
 const validateEditProfileData = (req) => {
   const allowedEditFields = [
-    "firstName",
-    "lastName",
+    "name",
     "emailId",
-    "skills",
+    "breed",
     "age",
     "photoUrl",
     "gender",
     "about",
+    "location",
   ];
   const IsEditAllowed = Object.keys(req.body).every((field) =>
     allowedEditFields.includes(field)

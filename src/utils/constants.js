@@ -1,10 +1,11 @@
 const USER_SAFE_INFO = [
-  "firstName",
-  "lastName",
+  "name",
   "age",
-  "skills",
   "about",
+  "gender",
   "photoUrl",
+  "breed",
+  "location",
 ];
 
 module.exports = {

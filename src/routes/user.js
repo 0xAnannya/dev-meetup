@@ -2,7 +2,7 @@ const express = require("express");
 const { userAuth } = require("../middlewares/auth");
 const ConnectionRequestModel = require("../models/connectionRequestSchema");
 const { USER_SAFE_INFO } = require("../utils/constants");
-const User = require("../models/user");
+const Dog = require("../models/dog");
 const userRouter = express.Router();
 
 //get all the pending connection requests
@@ -62,7 +62,6 @@ userRouter.get("/feed", userAuth, async (req, res) => {
     let limit = parseInt(req.query.limit) || 10;
     limit = limit > 50 ? 50 : limit;
     const skip = (page - 1) * limit;
-    console.log(skip);
 
     const connections = await ConnectionRequestModel.find({
       $or: [{ fromUserId: loggedInUser._id }, { toUserId: loggedInUser._id }],
@@ -75,7 +74,7 @@ userRouter.get("/feed", userAuth, async (req, res) => {
       hideUsersFromFeed.add(connection.toUserId.toString());
     });
 
-    const users = await User.find({
+    const users = await Dog.find({
       $and: [
         { _id: { $ne: loggedInUser._id } },
         { _id: { $nin: Array.from(hideUsersFromFeed) } },

@@ -1,11 +1,11 @@
 const express = require("express");
 const { userAuth } = require("../middlewares/auth");
-const User = require("../models/user");
 const {
   validateEditProfileData,
   validateIsStrongPassword,
 } = require("../utils/validators");
 const bcrypt = require("bcrypt"); // for password encryption
+const Dog = require("../models/dog");
 
 const profileRouter = express.Router();
 
@@ -32,7 +32,7 @@ profileRouter.patch("/profile/edit", userAuth, async (req, res) => {
 
     await loggedInUser.save();
     res.json({
-      message: `${loggedInUser.firstName} your profile has been updated`,
+      message: `${loggedInUser.name} your profile has been updated`,
       data: loggedInUser,
     });
   } catch (err) {
@@ -65,10 +65,10 @@ profileRouter.patch("/profile/changePassword", userAuth, async (req, res) => {
   }
 });
 
-profileRouter.delete("/users", async (req, res) => {
+profileRouter.delete("/deleteProfile", async (req, res) => {
   const id = req.body.id;
   try {
-    const found = await User.findByIdAndDelete(id);
+    const found = await Dog.findByIdAndDelete(id);
     if (!found) {
       return res.status(404).send("User not found");
     }
@@ -82,7 +82,7 @@ profileRouter.delete("/users", async (req, res) => {
 
 profileRouter.get("/users", async (req, res) => {
   try {
-    const users = await User.find({ firstName: "Anannya" });
+    const users = await Dog.find({ name: "Charlie" });
     if (users.length === 0) {
       return res.status(404).send("NO users found");
     }

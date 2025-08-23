@@ -2,6 +2,7 @@ const express = require("express");
 const { userAuth } = require("../middlewares/auth");
 const User = require("../models/user");
 const ConnectionRequestModel = require("../models/connectionRequestSchema");
+const Dog = require("../models/dog");
 
 const requestRouter = express.Router();
 
@@ -23,7 +24,7 @@ requestRouter.post(
       }
 
       //toUser must exist
-      const toUser = await User.findById(toUserId);
+      const toUser = await Dog.findById(toUserId);
       if (!toUser) {
         return res.status(404).json({ message: "User not found" });
       }
@@ -45,14 +46,12 @@ requestRouter.post(
         toUserId,
         status,
       });
-      const data = await connectionRequest.save();
+      await connectionRequest.save();
       res.json({
         message:
           status == "interested"
-            ? req.user.firstName +
-              " Sent Connection Request to " +
-              toUser.firstName
-            : req.user.firstName + " ignored" + toUser.firstName,
+            ? req.user.name + " Sent Connection Request to " + toUser.name
+            : req.user.name + " ignored " + toUser.name,
       });
     } catch (err) {
       res.status(500).send(err.message);
@@ -84,17 +83,17 @@ requestRouter.post(
           .status(404)
           .json({ message: "Connection request not found" });
       }
-      const fromUser = await User.findById(connectioRequest.fromUserId);
+      const fromUser = await Dog.findById(connectioRequest.fromUserId);
 
       connectioRequest.status = status;
-      const data = await connectioRequest.save();
+      await connectioRequest.save();
       res.json({
         message:
-          loggedInUser.firstName +
+          loggedInUser.name +
           " " +
           status +
           " the request from " +
-          fromUser.firstName,
+          fromUser.name,
       });
     } catch (err) {
       res.status(400).json({ message: err.message });

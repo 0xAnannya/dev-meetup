@@ -2,7 +2,7 @@ const express = require("express");
 const validator = require("validator");
 const bcrypt = require("bcrypt"); // for password encryption
 const { validateSignUpData } = require("../utils/validators");
-const User = require("../models/user");
+const Dog = require("../models/dog");
 
 const authRouter = express.Router();
 
@@ -12,29 +12,29 @@ authRouter.post("/signUp", async (req, res) => {
     validateSignUpData(req);
 
     const {
-      firstName,
-      lastName,
+      name,
       password,
       emailId,
-      skills,
       age,
       photoUrl,
       gender,
       about,
+      breed,
+      location,
     } = req.body;
 
     //encrypt password
     const passwordHash = await bcrypt.hash(password, 10); //10 is salt rounds
-    const user = new User({
-      firstName,
-      lastName,
+    const user = new Dog({
+      name,
       password: passwordHash,
       emailId,
-      skills,
       age,
       photoUrl,
       gender,
       about,
+      breed,
+      location,
     });
     await user.save();
     res.send("User created successfully");
@@ -53,7 +53,7 @@ authRouter.post("/login", async (req, res) => {
       throw new Error("Invalid email");
     }
 
-    const user = await User.findOne({ emailId });
+    const user = await Dog.findOne({ emailId });
     if (!user) {
       throw new Error("Invalid credentials");
     }
