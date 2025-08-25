@@ -36,8 +36,14 @@ authRouter.post("/signUp", async (req, res) => {
       breed,
       location,
     });
-    await user.save();
-    res.send("User created successfully");
+    const savedUser = await user.save();
+
+    const token = await user.getJWT();
+    res.cookie("token", token, { expires: new Date(Date.now() + 8 * 360000) });
+
+    res
+      .json({ message: "User created successfully", data: savedUser })
+      .status(200);
   } catch (err) {
     console.error("Error during sign up:", err.message);
     res.send(err.message).status(500);
@@ -63,6 +69,7 @@ authRouter.post("/login", async (req, res) => {
       const token = await user.getJWT(); // generate JWT token
 
       // on production use hhtpOnly: true
+
       res.cookie("token", token, {
         expires: new Date(Date.now() + 8 * 360000),
       });

@@ -38,7 +38,9 @@ requestRouter.post(
       });
 
       if (existingConnectionRequest) {
-        res.status(400).json({ message: "Connection request already exists" });
+        return res
+          .status(400)
+          .json({ message: "Connection request already exists" });
       }
 
       const connectionRequest = new ConnectionRequestModel({

@@ -36,7 +36,7 @@ profileRouter.patch("/profile/edit", userAuth, async (req, res) => {
       data: loggedInUser,
     });
   } catch (err) {
-    res.status(500).send("Internal Server Error");
+    res.status(500).send(err);
   }
 });
 
