@@ -3,16 +3,16 @@ const validator = require("validator");
 const validateSignUpData = (req) => {
   const { name, breed, password, emailId } = req.body;
 
-  if (!name) {
-    throw new Error("Name required");
-  } else if (!validator.isEmail(emailId)) {
+  if (!validator.isEmail(emailId)) {
     throw new Error("Invalid email address");
-  } else if (!breed) {
-    throw new Error("Breed required");
   } else if (!validator.isStrongPassword(password)) {
     throw new Error(
       "Password is not strong enough. It should contain at least 8 characters, including uppercase, lowercase, numbers, and symbols."
     );
+  } else if (!name) {
+    throw new Error("Name required");
+  } else if (!breed) {
+    throw new Error("Breed required");
   }
 };
 
